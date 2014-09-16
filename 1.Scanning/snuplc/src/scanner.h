@@ -57,7 +57,29 @@ enum EToken {
   tDot,                             ///< a dot
   tLBrak,                           ///< a left bracket
   tRBrak,                           ///< a right bracket
+// Additional Tokens.
+  tIdent,                           ///< identifier
+  tBoolConst,                       ///< boolean ("true" or "false")
+  tType,                            ///< type ("integer" or "boolean")
+  tOr,                              ///< or operator ("||")
+  tAnd,                             ///< and operator ("&&")
+  tNot,                             ///< not operator ('!')
+  tBegin,                           ///< keyword "begin"
+  tEnd,                             ///< keyword "end"
+  tModule,                          ///< keyword "module"
+  tIf,                              ///< keyword "if"
+  tThen,                            ///< keyword "then"
+  tElse,                            ///< keyword "else"
+  tWhile,                           ///< keyword "while"
+  tDo,                              ///< keyword "do"
+  tReturn,                          ///< keyword "return"
+  tVar,                             ///< keyword "var"
+  tProcedure,                       ///< keyword "procedure"
+  tFunction,                        ///< keyword "function"
+  tComma,                           ///< a comma
+  tColon,                           ///< a colon
 
+  tComment,                         ///< comment line
   tEOF,                             ///< end of file
   tIOError,                         ///< I/O error
   tUndefined,                       ///< undefined
@@ -278,6 +300,13 @@ class CScanner {
     /// @retval true character is numeric
     /// @retval false character is not numeric
     bool IsNum(char c) const;
+    
+    /// @brief check if a character is a letters and underscore(A..Z,a..z,_)
+    ///
+    /// @param c character
+    /// @retval true character is letter_
+    /// @retval false character is not letter_
+    bool IsLetter_(char c) const;
 
     /// @}
 
