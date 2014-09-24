@@ -423,7 +423,11 @@ CToken* CScanner::Scan()
       break;
   }
 
-  return NewToken(token, tokval);
+  //consume the tComments
+  if (tComment == token)
+    return Scan();
+  else
+    return NewToken(token, tokval);
 }
 
 char CScanner::GetChar()
