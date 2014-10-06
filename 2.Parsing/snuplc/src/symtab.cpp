@@ -223,6 +223,7 @@ ostream& CSymProc::print(ostream &out, int indent) const
 // CSymtab
 //
 CSymtab::CSymtab(void)
+  : _parent(NULL)
 {
 }
 
