@@ -94,18 +94,40 @@ class CParser {
     /// @name methods for recursive-descent parsing
     /// @{
 
+    //scope
     CAstModule*       module(void);
 
+    //statement
     CAstStatement*    statSequence(CAstScope *s);
 
+    CAstStatement*    statement(CAstScope *s);
     CAstStatAssign*   assignment(CAstScope *s);
+    CAstStatCall*     procedurecall(CAstScope *s);
+    CAstStatReturn*   returnstatement(CAstScope *s);
+    CAstStatIf*       ifstatement(CAstScope *s);
+    CAstStatWhile*    whilestatement(CAstScope *s);
 
+    CAstStatement*    subroutinebody(CAstScope *s);
+   
+    //expression
     CAstExpression*   expression(CAstScope *s);
     CAstExpression*   simpleexpr(CAstScope *s);
     CAstExpression*   term(CAstScope *s);
     CAstExpression*   factor(CAstScope *s);
-
+    CAstFunctionCall* functioncall(CAstScope *s);
+    
+    //operands
+    CAstDesignator*   ident(CAstScope *s);
     CAstConstant*     number(void);
+    CAstConstant*     boolean(void);
+    
+    //type
+    CAstType*         type(void);
+
+    //scope
+    CAstProcedure*    subroutinedecl(CAstScope *s);
+    void              vardeclaration(CAstScope *s);
+    void              formalparam(CAstScope *s, CSymProc* pSymProc);
 
     /// @}
 

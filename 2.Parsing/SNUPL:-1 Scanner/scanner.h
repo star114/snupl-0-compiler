@@ -48,7 +48,7 @@ using namespace std;
 /// each member of this enumeration represents a token in SnuPL/0
 ///
 enum EToken {
-  tNumber=0,                        ///< number
+  tNumber,                          ///< number
   tPlusMinus,                       ///< '+' or '-'
   tMulDiv,                          ///< '*' or '/'
   tRelOp,                           ///< relational operator
@@ -57,29 +57,7 @@ enum EToken {
   tDot,                             ///< a dot
   tLBrak,                           ///< a left bracket
   tRBrak,                           ///< a right bracket
-// Additional Tokens.
-  tIdent,                           ///< identifier
-  tBoolConst,                       ///< boolean ("true" or "false")
-  tType,                            ///< type ("integer" or "boolean")
-  tOr,                              ///< or operator ("||")
-  tAnd,                             ///< and operator ("&&")
-  tNot,                             ///< not operator ('!')
-  tBegin,                           ///< keyword "begin"
-  tEnd,                             ///< keyword "end"
-  tModule,                          ///< keyword "module"
-  tIf,                              ///< keyword "if"
-  tThen,                            ///< keyword "then"
-  tElse,                            ///< keyword "else"
-  tWhile,                           ///< keyword "while"
-  tDo,                              ///< keyword "do"
-  tReturn,                          ///< keyword "return"
-  tVar,                             ///< keyword "var"
-  tProcedure,                       ///< keyword "procedure"
-  tFunction,                        ///< keyword "function"
-  tComma,                           ///< a comma
-  tColon,                           ///< a colon
 
-  tComment,                         ///< comment line
   tEOF,                             ///< end of file
   tIOError,                         ///< I/O error
   tUndefined,                       ///< undefined
@@ -252,13 +230,7 @@ class CScanner {
     void NextToken(void);
 
     /// @brief store the current position of the input stream internally
-    void RecordStreamPosition();
-
-    /// @brief return the previously recorded input stream position
-    ///
-    /// @param lineno line number
-    /// @param charpos character position
-    void GetRecordedStreamPosition(int *lineno, int *charpos);
+    void RecordStreamPosition(void);
 
     /// @brief create and return a new token
     ///
@@ -294,19 +266,26 @@ class CScanner {
     /// @retval false character is not white space
     bool IsWhite(char c) const;
 
+    /// @brief check if a character is an alphabetic character (a-z, A-Z)
+    ///
+    /// @param c character
+    /// @retval true character is alphabetic
+    /// @retval false character is not alphabetic
+    bool IsAlpha(char c) const;
+
     /// @brief check if a character is an numeric character (0-9)
     ///
     /// @param c character
     /// @retval true character is numeric
     /// @retval false character is not numeric
     bool IsNum(char c) const;
-    
-    /// @brief check if a character is a letters and underscore(A..Z,a..z,_)
+
+    /// @brief check if a character is a valid ID character
     ///
     /// @param c character
-    /// @retval true character is letter_
-    /// @retval false character is not letter_
-    bool IsLetter_(char c) const;
+    /// @retval true character is valid as an ID character
+    /// @retval false character is not valid in an ID
+    bool IsIDChar(char c) const;
 
     /// @}
 

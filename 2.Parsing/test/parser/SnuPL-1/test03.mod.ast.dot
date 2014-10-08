@@ -1,0 +1,23 @@
+digraph AST {
+  node0 [label="m placeholder",shape=box];
+  node5 [label=":=",shape=box];
+  node1 [label="1",shape=ellipse];
+  node5->node1;
+  node4 [label="add",shape=box];
+  node2 [label="2",shape=ellipse];
+  node4->node2;
+  node3 [label="3",shape=ellipse];
+  node4->node3;
+  node5->node4;
+  node0 -> node5 [style=dotted];
+  node10 [label=":=",shape=box];
+  node6 [label="4",shape=ellipse];
+  node10->node6;
+  node9 [label="mul",shape=box];
+  node7 [label="5",shape=ellipse];
+  node9->node7;
+  node8 [label="6",shape=ellipse];
+  node9->node8;
+  node10->node9;
+  node5 -> node10 [style=dotted];
+};

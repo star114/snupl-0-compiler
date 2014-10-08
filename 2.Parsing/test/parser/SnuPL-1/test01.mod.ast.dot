@@ -42,4 +42,4 @@ digraph AST {
   node20->node19;
   node21->node20;
   node8 -> node21 [style=dotted];
-};
+}
