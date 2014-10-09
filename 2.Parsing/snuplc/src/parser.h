@@ -127,8 +127,11 @@ class CParser {
     //scope
     CAstProcedure*    subroutinedecl(CAstScope *s);
     void              vardeclaration(CAstScope *s);
-    void              formalparam(CAstScope *s, CSymProc* pSymProc);
 
+    //Assist function
+    void              _makeidentlist(vector<CToken>& vt);
+    const CSymbol*    _findsymbol(const string& strName, CSymtab* pSymtab);
+    bool              _addsymbol(const string& strName, CType* pType, CSymtab* pSymtab);
     /// @}
 
 

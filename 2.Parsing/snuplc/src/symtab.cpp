@@ -286,7 +286,7 @@ ostream& CSymtab::print(ostream &out, int indent) const
     out << endl;
     (*it++).second->print(out, indent+2);
   }
-  out << endl << ind << "]]" << endl;
+  return out << endl << ind << "]]" << endl;
 }
 
 ostream& operator<<(ostream &out, const CSymtab &t)

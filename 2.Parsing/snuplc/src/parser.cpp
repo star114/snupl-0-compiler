@@ -145,7 +145,7 @@ CAstModule* CParser::module(void)
   Consume(tEnd);
   CToken tModuleNameEnd;
   Consume(tIdent, &tModuleNameEnd);
-  
+ 
   //Check Name matched.
   if (0 != tModuleName.GetValue().compare(tModuleNameEnd.GetValue())) SetError(tModuleNameEnd, "Module Name is not matched"); 
   Consume(tDot);
@@ -454,18 +454,20 @@ CAstConstant* CParser::boolean(void)
 
   Consume(tBoolConst, &t);
 
-  errno = 0;
-  long long v = 0;
-  
-  // [FIX-ME]
-  //if "true" v =1 else if "false" v = 0 else Error!
-  //strncmp(t.GetValue().c_str(), "true", 4);
-
-  if (errno != 0) SetError(t, "invalid boolean.");
+  long long v = -1;
+  if (0 == t.GetValue().compare("true"))
+     v = 1;
+  else if (0 == t.GetValue().compare("false"))
+     v = 0;
+  else
+     SetError(t, "invalid boolean type.");
 
   return new CAstConstant(t, CTypeManager::Get()->GetBool(), v);
 }
 
+// [Check]
+// CAstType* -> cannot destroy class 
+// CAstType's Node is not consist of any other class instance.
 CAstType* CParser::type(void)
 {
    //
@@ -478,15 +480,16 @@ CAstType* CParser::type(void)
 
    Consume(tType, &t);
 
-   errno = 0;
-   
-   // [FIX-ME]
-   // if "integer" 
-   const CType* pType = CTypeManager::Get()->GetNull();
-   
-   if (errno != 0) SetError(t, "invalid type.");
-
-
+   const CType* pType = NULL;
+   if (0 == t.GetValue().compare("integer"))
+      pType = CTypeManager::Get()->GetInt();
+   else if (0 == t.GetValue().compare("boolean"))
+      pType = CTypeManager::Get()->GetBool();
+   else
+   {
+      pType = CTypeManager::Get()->GetNull();
+      SetError(t, "invalid type.");
+   }
    return new CAstType(t, pType);
 }
 
@@ -502,18 +505,9 @@ CAstDesignator* CParser::ident(CAstScope *s)
 
    Consume(tIdent, &t);
 
-   errno = 0;
-
-   const CSymbol *pSymbol = NULL;
    CSymtab *pSymTab = s->GetSymbolTable();
-   if (NULL == pSymTab) SetError(t, "Symbol table is NULL.");
-   else
-   {
-        pSymbol = pSymTab->FindSymbol(t.GetValue(), sLocal);
-        if (NULL == pSymbol) pSymbol = pSymTab->FindSymbol(t.GetValue());
-        if (NULL == pSymbol) SetError(t, "invalid ident.");
-        if (errno != 0) SetError(t, "invalid ident.");
-   }
+   const CSymbol* pSymbol = _findsymbol(t.GetValue(), pSymTab);
+   if (NULL == pSymbol) SetError(t, "invalid ident.");
    
    return new CAstDesignator(t, pSymbol);
 }
@@ -524,12 +518,99 @@ CAstProcedure* CParser::subroutinedecl(CAstScope* s)
    // subroutinedecl = (procedureDecl | functionDecl) subroutineBody ident ";"
    // procedureDecl = "procedure" ident [ formalParam ] ";".
    // functionDecl = "function" ident [ formalParam ] ":" type ";";
+   // formalParam = "(" [ident { "," ident } ] ")".
    //
-   
-   CAstProcedure* sp = NULL;
-   //[FIX-ME]
-   
 
+#define INVALID 0
+#define PROCEDURE 1
+#define FUNCTION 2
+
+   CAstProcedure* sp = NULL;
+   
+   CToken tMain, tid;
+   int nCheck = INVALID;
+
+   switch (_scanner->Peek().GetType())
+   {
+        case tProcedure:
+            Consume(tProcedure, &tMain);
+            nCheck = PROCEDURE;
+            break;
+        case tFunction:
+            Consume(tFunction, &tMain);
+            nCheck = FUNCTION;
+            break;
+        default:
+            SetError(_scanner->Peek(), "subroutineDecl expected.");
+            break;
+   }
+
+   if (INVALID != nCheck)
+   {
+        Consume(tIdent, &tid);
+        vector<CToken> vt;
+
+        if (tLBrak == _scanner->Peek().GetType())
+        {
+            Consume(tLBrak);
+            if (tIdent == _scanner->Peek().GetType())
+            {
+                vector<CToken> vt;
+                _makeidentlist(vt);
+            }
+            Consume(tRBrak);
+        }
+
+        const CType* pReturnType = NULL;
+        if (PROCEDURE == nCheck)
+        {
+            Consume(tSemicolon);
+            pReturnType = CTypeManager::Get()->GetNull();
+        }
+        else if (FUNCTION == nCheck)
+        {
+            Consume(tColon);
+            CAstType* pType = type();
+            pReturnType = pType->GetType();
+            Consume(tSemicolon);
+        }
+        else 
+            SetError(tMain, "UNEXPECTED ERROR!!");
+        
+        CSymProc* pSymProc = new CSymProc(tid.GetValue(), pReturnType);
+        sp = new CAstProcedure(tMain, tid.GetValue(), s, pSymProc);
+
+        CSymtab* pSymtab = sp->GetSymbolTable();
+        vector<CToken>::const_iterator it = vt.begin();
+        int nIndex = 0;
+        while (it != vt.end())
+        {
+            CToken tvar = (*it++);
+            string strName = tvar.GetValue();
+            const CSymbol* pSymbol = _findsymbol(strName, pSymtab);
+            if (NULL == pSymbol) SetError(tvar, "invalid parameter.");
+
+            // [Check]
+            CSymbol* pLocalSymbol = sp->CreateVar(strName, pSymbol->GetDataType());
+            bool fSuccess = pSymtab->AddSymbol(pLocalSymbol);
+            if (fSuccess)
+                pSymProc->AddParam(new CSymParam(nIndex++, strName, pSymbol->GetDataType()));
+            else
+            {
+                SetError(tvar, "already exist parameter.");
+                delete pLocalSymbol;
+            }
+        }
+
+        CAstStatement* pStat = subroutinebody(sp);
+        sp->SetStatementSequence(pStat);
+
+        CToken tid_tail;
+        Consume(tIdent, &tid_tail);
+        if (0 != tid.GetValue().compare(tid_tail.GetValue()))
+            SetError(tid_tail, "SubroutineDecl Name Match Failed.");
+        Consume(tSemicolon);
+   }
    return sp;
 }
 
@@ -539,14 +620,57 @@ void CParser::vardeclaration(CAstScope* s)
    // varDeclaration = [ "var" { ident { "," ident } ":" type ";" } ].
    //
 
+   if (tVar == _scanner->Peek().GetType())
+   {
+        Consume(tVar);
+        
+        if (tIdent == _scanner->Peek().GetType())
+        {
+            vector<CToken> vt;
+            _makeidentlist(vt);
+
+            Consume(tColon);
+
+            CAstType* pType = type();
+
+            Consume(tSemicolon);
+
+            CSymtab* pSymtab = s->GetSymbolTable();
+            vector<CToken>::const_iterator it = vt.begin();
+            while (it != vt.end())
+            {
+                CToken tvar = (*it++);
+                CSymbol* pSymbol = s->CreateVar(tvar.GetValue(), pType->GetType());
+                bool fSuccess = pSymtab->AddSymbol(pSymbol);
+                if (false == fSuccess)
+                {
+                    SetError(tvar, "Already Exist variable name");
+                    delete pSymbol;
+                }
+            }
+        }
+   }
    return;
 }
 
-void CParser::formalparam(CAstScope *s, CSymProc* pSymProc)
+void CParser::_makeidentlist(vector<CToken>& vt)
 {
-   //
-   // formalParam = "(" [ident { "," ident } ] ")".
-   //
+    CToken t;
+    Consume(tIdent, &t);
+    vt.push_back(t);
 
-   return;
+    while (tComma == _scanner->Peek().GetType())
+    {
+        Consume(tComma);
+        CToken tid;
+        Consume(tIdent, &tid);
+        vt.push_back(tid);
+    }
+}
+
+const CSymbol* CParser::_findsymbol(const string& strName, CSymtab* pSymtab)
+{
+    const CSymbol* pSymbol = pSymtab->FindSymbol(strName, sLocal);
+    if (NULL == pSymbol) pSymbol = pSymtab->FindSymbol(strName);
+    return pSymbol;
 }
