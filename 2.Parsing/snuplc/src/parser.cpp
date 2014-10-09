@@ -480,17 +480,16 @@ CAstType* CParser::type(void)
 
    Consume(tType, &t);
 
-   const CType* pType = NULL;
+   CTypeManager* pTypeManager = CTypeManager::Get();
    if (0 == t.GetValue().compare("integer"))
-      pType = CTypeManager::Get()->GetInt();
+      return new CAstType(t, pTypeManager->GetInt());
    else if (0 == t.GetValue().compare("boolean"))
-      pType = CTypeManager::Get()->GetBool();
+      return new CAstType(t, pTypeManager->GetBool());
    else
    {
-      pType = CTypeManager::Get()->GetNull();
       SetError(t, "invalid type.");
+      return new CAstType(t, pTypeManager->GetNull());
    }
-   return new CAstType(t, pType);
 }
 
 CAstDesignator* CParser::ident(CAstScope *s)
@@ -561,23 +560,22 @@ CAstProcedure* CParser::subroutinedecl(CAstScope* s)
             Consume(tRBrak);
         }
 
-        const CType* pReturnType = NULL;
+        CSymProc* pSymProc = NULL;
         if (PROCEDURE == nCheck)
         {
             Consume(tSemicolon);
-            pReturnType = CTypeManager::Get()->GetNull();
+            pSymProc = new CSymProc(tid.GetValue(), CTypeManager::Get()->GetNull());
         }
         else if (FUNCTION == nCheck)
         {
             Consume(tColon);
             CAstType* pType = type();
-            pReturnType = pType->GetType();
+            pSymProc = new CSymProc(tid.GetValue(), pType->GetType());
             Consume(tSemicolon);
         }
         else 
             SetError(tMain, "UNEXPECTED ERROR!!");
-        
-        CSymProc* pSymProc = new CSymProc(tid.GetValue(), pReturnType);
+         
         sp = new CAstProcedure(tMain, tid.GetValue(), s, pSymProc);
 
         CSymtab* pSymtab = sp->GetSymbolTable();
@@ -593,7 +591,7 @@ CAstProcedure* CParser::subroutinedecl(CAstScope* s)
             // [Check]
             CSymbol* pLocalSymbol = sp->CreateVar(strName, pSymbol->GetDataType());
             bool fSuccess = pSymtab->AddSymbol(pLocalSymbol);
-            if (fSuccess)
+            if (fSuccess && pSymProc)
                 pSymProc->AddParam(new CSymParam(nIndex++, strName, pSymbol->GetDataType()));
             else
             {
@@ -671,6 +669,6 @@ void CParser::_makeidentlist(vector<CToken>& vt)
 const CSymbol* CParser::_findsymbol(const string& strName, CSymtab* pSymtab)
 {
     const CSymbol* pSymbol = pSymtab->FindSymbol(strName, sLocal);
-    if (NULL == pSymbol) pSymbol = pSymtab->FindSymbol(strName);
+    if (NULL == pSymbol) return pSymtab->FindSymbol(strName);
     return pSymbol;
 }
