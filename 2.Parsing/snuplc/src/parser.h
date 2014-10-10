@@ -101,8 +101,8 @@ class CParser {
     CAstStatement*    statSequence(CAstScope *s);
 
     CAstStatement*    statement(CAstScope *s);
-    CAstStatAssign*   assignment(CAstScope *s);
-    CAstStatCall*     procedurecall(CAstScope *s);
+    CAstStatAssign*   assignment(CToken t, CAstScope *s);
+    CAstStatCall*     procedurecall(CToken t, CAstScope *s);
     CAstStatReturn*   returnstatement(CAstScope *s);
     CAstStatIf*       ifstatement(CAstScope *s);
     CAstStatWhile*    whilestatement(CAstScope *s);
@@ -114,10 +114,10 @@ class CParser {
     CAstExpression*   simpleexpr(CAstScope *s);
     CAstExpression*   term(CAstScope *s);
     CAstExpression*   factor(CAstScope *s);
-    CAstFunctionCall* functioncall(CAstScope *s);
+    CAstFunctionCall* functioncall(CToken t, CAstScope *s);
     
     //operands
-    CAstDesignator*   ident(CAstScope *s);
+    CAstDesignator*   ident(CToken t, CAstScope *s);
     CAstConstant*     number(void);
     CAstConstant*     boolean(void);
     
@@ -129,9 +129,10 @@ class CParser {
     void              vardeclaration(CAstScope *s);
 
     //Assist function
+    bool              _isexpressionfirst(EToken et);
+    void              _makeexplist(vector<CAstExpression*>& vae, CAstScope* s);
     void              _makeidentlist(vector<CToken>& vt);
     const CSymbol*    _findsymbol(const string& strName, CSymtab* pSymtab);
-    bool              _addsymbol(const string& strName, CType* pType, CSymtab* pSymtab);
     /// @}
 
 

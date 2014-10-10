@@ -1,0 +1,13 @@
+digraph AST {
+  node0 [label="m test03",shape=box];
+  node2 [label="p/f foo",shape=box];
+  node0 -> node2;
+  node4 [label="p/f bar",shape=box];
+  node0 -> node4;
+  node6 [label="p/f foobar",shape=box];
+  node8 [label="return",shape=box];
+  node7 [label="1",shape=ellipse];
+  node8->node7;
+  node6 -> node8 [style=dotted];
+  node0 -> node6;
+};
