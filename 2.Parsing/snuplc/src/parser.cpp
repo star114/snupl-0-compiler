@@ -564,23 +564,6 @@ CAstFunctionCall* CParser::functioncall(CToken t, CAstScope *s)
             fc->AddArg(pexp);
         }
    }
-
-   // [CHECK] to type check??
-   // parameter counts check.
-   //if (pSymbol->GetNParams() != vae.size())
-   //   SetError(t, "function call's parameter counts are not matched with registered.");
-
-   //int nIndex = 0;
-   //vector<CAstExpression*>::const_iterator it = vae.begin();
-   //while (it != vae.end())
-   //{
-   //     CAstExpression* pexp = (*it++);
-   //     const CSymParam* pSymParam = pSymbol->GetParam(nIndex++);
-   //     if (pexp->GetType() != pSymParam->GetDataType())
-   //        SetError(pexp.GetToken(), "type check error!");
-   //}
-   //
-
    return fc;
 }
 
