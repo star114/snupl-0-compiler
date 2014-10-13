@@ -750,8 +750,9 @@ CAstProcedure* CParser::subroutinedecl(CAstScope* s)
             string strName = tvar.GetValue();
 
             // [Check] what is parameter type ?? 
+            //-> in etl, snupl/0 can have only int type parameter!  
             CSymParam* pSymParam = new CSymParam(nIndex++, strName, 
-                  CTypeManager::Get()->GetNull());
+                  CTypeManager::Get()->GetInt());
             pSymtab->AddSymbol(pSymParam);
             pSymProc->AddParam(pSymParam);
 
