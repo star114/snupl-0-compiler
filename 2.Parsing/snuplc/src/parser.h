@@ -122,7 +122,7 @@ class CParser {
     CAstConstant*     boolean(void);
     
     //type
-    CAstType*         type(void);
+    const CType*      type(void);
 
     //scope
     CAstProcedure*    subroutinedecl(CAstScope *s);

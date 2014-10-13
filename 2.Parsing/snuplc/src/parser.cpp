@@ -197,7 +197,6 @@ CAstStatement* CParser::statement(CAstScope *s)
     // FIRST(statement) = { tIdent, tIf, tWhile, tReturn}
     // 
     CAstStatement *st = NULL;
-    
     EToken et = _scanner->Peek().GetType();
     switch (et) {
     // statement ::= assignment || subroutineCall
@@ -243,9 +242,13 @@ CAstStatAssign* CParser::assignment(CToken t, CAstScope *s)
 
   CAstDesignator *lhs = ident(t, s);
 
+  assert(NULL != lhs);
+
   Consume(tAssign, &tAs);
 
   CAstExpression *rhs = expression(s);
+  
+  assert(NULL != rhs);
 
   return new CAstStatAssign(tAs, lhs, rhs);
 }
@@ -257,6 +260,8 @@ CAstStatCall* CParser::procedurecall(CToken t, CAstScope* s)
    //
 
    CAstFunctionCall* call = functioncall(t, s);
+   
+   assert(NULL != call);
 
    return new CAstStatCall(t, call);
 }
@@ -274,8 +279,10 @@ CAstStatReturn* CParser::returnstatement(CAstScope* s)
    
    Consume(tReturn, &t);
    if (_isexpressionfirst(_scanner->Peek().GetType()))
+   {
       expr = expression(s);
-
+      assert(NULL != expr);
+   }
    return new CAstStatReturn(t, s, expr);
 }
 
@@ -294,10 +301,10 @@ CAstStatIf* CParser::ifstatement(CAstScope* s)
 
    Consume(tLBrak);
    cond = expression(s);
+   assert(NULL != cond);
    Consume(tRBrak);
    Consume(tThen);
    ifBody = statSequence(s);
-   
    if (_scanner->Peek().GetType() == tElse)
    {
         Consume(tElse);
@@ -321,6 +328,7 @@ CAstStatWhile* CParser::whilestatement(CAstScope* s)
 
    Consume(tLBrak);
    cond = expression(s);
+   assert(NULL != cond);
    Consume(tRBrak);
    
    Consume(tDo);
@@ -357,11 +365,11 @@ CAstExpression* CParser::expression(CAstScope* s)
   CAstExpression *left = NULL, *right = NULL;
  
   left = simpleexpr(s);
-
+  assert(NULL != left);
   if (_scanner->Peek().GetType() == tRelOp) {
     Consume(tRelOp, &t);
     right = simpleexpr(s);
-
+    assert(NULL != right);
     if (t.GetValue() == "=")       relop = opEqual;
     else if (t.GetValue() == "#")  relop = opNotEqual;
     else if (t.GetValue() == "<")  relop = opLessThan;
@@ -392,6 +400,7 @@ CAstExpression* CParser::simpleexpr(CAstScope *s)
         fNeg = true;
   }
   n = term(s);
+  assert(NULL != n);
 
   //[Check] how to handle "+"
   if(fNeg)
@@ -422,6 +431,7 @@ CAstExpression* CParser::simpleexpr(CAstScope *s)
     }
 
     r = term(s);
+    assert(NULL != r);
 
     n = new CAstBinaryOp(t, op, l, r);
 
@@ -440,7 +450,7 @@ CAstExpression* CParser::term(CAstScope *s)
   CAstExpression *n = NULL;
 
   n = factor(s);
-
+  assert(NULL != n);
   EToken et = _scanner->Peek().GetType();
   while (et == tMulDiv || et == tAnd) {
     CToken t;
@@ -463,7 +473,7 @@ CAstExpression* CParser::term(CAstScope *s)
     }
 
     r = factor(s);
-
+    assert(NULL != r);
     n = new CAstBinaryOp(t, op, l, r);
     
     et = _scanner->Peek().GetType();
@@ -485,6 +495,7 @@ CAstExpression* CParser::factor(CAstScope *s)
     // factor ::= number
     case tNumber:
       n = number();
+      assert(NULL != n);
       break;
 
     // factor ::= "(" expression ")"
@@ -492,6 +503,7 @@ CAstExpression* CParser::factor(CAstScope *s)
       {
         Consume(tLBrak);
         n = expression(s);
+        assert (NULL != n);
         Consume(tRBrak);
       }
       break;
@@ -505,12 +517,14 @@ CAstExpression* CParser::factor(CAstScope *s)
             n = functioncall(t, s);
         else
             n = ident(t, s);
+        assert(NULL != n);
       }
       break;
 
     // factor ::= boolean
     case tBoolConst:
       n = boolean();
+      assert(NULL != n);
       break;
 
     // factor ::= "!" factor
@@ -519,6 +533,7 @@ CAstExpression* CParser::factor(CAstScope *s)
       CToken t;
       Consume(tNot, &t);
       n = factor(s);
+      assert(NULL != n);
       CAstExpression* u = n;
       n = new CAstUnaryOp(t, opNot, u);
       break;
@@ -543,18 +558,16 @@ CAstFunctionCall* CParser::functioncall(CToken t, CAstScope *s)
    if (NULL == pSymbol)
         SetError(t, "Cannot find function name.");
    // [Check] to type check?? 
-   else if (stProcedure != pSymbol->GetSymbolType())
-        SetError(t, "name is not subroutine symbol type");
+   //else if (stProcedure != pSymbol->GetSymbolType())
+   //     SetError(t, "name is not subroutine symbol type");
    else
    {
-
         Consume(tLBrak);
         vector<CAstExpression*> vae;
         _makeexplist(vae, s);
         Consume(tRBrak);
 
-        CSymProc* pSymProc = new CSymProc(pSymbol->GetName(), pSymbol->GetDataType());
-        fc = new CAstFunctionCall(t, pSymProc);
+        fc = new CAstFunctionCall(t, (const CSymProc*) pSymbol);
 
         int nIndex = 0;
         vector<CAstExpression*>::const_iterator it = vae.begin();
@@ -612,7 +625,8 @@ CAstConstant* CParser::boolean(void)
 // [Check]
 // CAstType* -> cannot destroy class 
 // CAstType's Node is not consist of any other class instance.
-CAstType* CParser::type(void)
+// -> return const CType* !
+const CType* CParser::type(void)
 {
    //
    // type = "integer" | "boolean"
@@ -626,13 +640,13 @@ CAstType* CParser::type(void)
 
    CTypeManager* pTypeManager = CTypeManager::Get();
    if (t.GetValue() == "integer")
-      return new CAstType(t, pTypeManager->GetInt());
+      return pTypeManager->GetInt();
    else if (t.GetValue() == "boolean")
-      return new CAstType(t, pTypeManager->GetBool());
+      return pTypeManager->GetBool();
    else
    {
       SetError(t, "invalid type.");
-      return new CAstType(t, pTypeManager->GetNull());
+      return NULL;
    }
 }
 
@@ -707,8 +721,9 @@ CAstProcedure* CParser::subroutinedecl(CAstScope* s)
         else if (FUNCTION == nCheck)
         {
             Consume(tColon);
-            CAstType* pType = type();
-            pSymProc = new CSymProc(tid.GetValue(), pType->GetType());
+            const CType* pType = type();
+            assert(NULL != pType);
+            pSymProc = new CSymProc(tid.GetValue(), pType);
             Consume(tSemicolon);
         }
         else 
@@ -783,8 +798,8 @@ void CParser::vardeclaration(CAstScope* s)
                 _makeidentlist(vt);
                 Consume(tColon);
 
-                CAstType* pType = type();
-
+                const CType* pType = type();
+                assert(NULL != pType);
                 Consume(tSemicolon);
 
                 CSymtab* pSymtab = s->GetSymbolTable();
@@ -792,7 +807,7 @@ void CParser::vardeclaration(CAstScope* s)
                 while (it != vt.end())
                 {
                     CToken tvar = (*it++);
-                    CSymbol* pSymbol = s->CreateVar(tvar.GetValue(), pType->GetType());
+                    CSymbol* pSymbol = s->CreateVar(tvar.GetValue(), pType);
                     pSymtab->AddSymbol(pSymbol);
 
                     //[check] semantic
@@ -831,15 +846,9 @@ void CParser::_makeexplist(vector<CAstExpression*>& vae, CAstScope* s)
         do
         {
             CAstExpression* pexp = expression(s);
-
-            if (NULL != pexp)
-                vae.push_back(pexp);
-            else
-            {
-                SetError(_scanner->Peek(), "unexpected Expression");
-                break;   
-            }
+            assert(NULL != pexp);
             
+            vae.push_back(pexp);
             tt = _scanner->Peek().GetType();
             if (tt != tComma) break;
             Consume(tComma);
