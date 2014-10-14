@@ -834,7 +834,7 @@ CTacAddr* CAstBinaryOp::ToTac(CCodeBlock *cb)
 CAstUnaryOp::CAstUnaryOp(CToken t, EOperation oper, CAstExpression *e)
   : CAstOperation(t, oper), _operand(e)
 {
-  assert((oper == opNeg) || (oper == opNot));
+  assert((oper == opNeg) || (oper == opNot) || (oper == opPos));
   assert(e != NULL);
 }
 

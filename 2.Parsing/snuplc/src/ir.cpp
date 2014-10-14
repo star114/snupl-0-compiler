@@ -56,8 +56,9 @@ char EOperationName[][OPERATION_STRLEN] = {
 
   // unary operators
   "neg",                            ///< negation
+  "pos",                            ///< positive
   "not",                            ///< binary not
-
+  
   // binary comparison operators
   "eq",                             ///< =  equal
   "neq",                            ///< #  not equal

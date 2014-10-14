@@ -19,7 +19,8 @@ end foo;
 procedure unary();
 begin
   a := -b;
-  b0 := !b1
+  b0 := !b1;
+  c := +a
 end unary;
 
 function binop(p0, p1): boolean;

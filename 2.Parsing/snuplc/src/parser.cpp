@@ -392,22 +392,33 @@ CAstExpression* CParser::simpleexpr(CAstScope *s)
   //
   CAstExpression *n = NULL;
 
-  bool fNeg = false;
+  bool fUnary = false;
   CToken tpm;
+  EOperation opUnary;
   if (tPlusMinus == _scanner->Peek().GetType())
   {
      Consume(tPlusMinus, &tpm);
+     fUnary = true;
      if (tpm.GetValue() == "-")
-        fNeg = true;
+        opUnary = opNeg;
+     else if (tpm.GetValue() == "+")
+        opUnary = opPos;
+     else
+     {
+        opUnary = opNop;
+        fUnary = false;
+     }
   }
+
   n = term(s);
   assert(NULL != n);
 
   //[Check] how to handle "+"
-  if(fNeg)
+  // -> opPos Unary operators add!!
+  if(true == fUnary)
   {
      CAstExpression *u = n;
-     n = new CAstUnaryOp(tpm, opNeg, u);
+     n = new CAstUnaryOp(tpm, opUnary, u);
   }
 
   EToken et = _scanner->Peek().GetType();
