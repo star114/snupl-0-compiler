@@ -13,12 +13,6 @@ begin
             return fib(n-1) + fib(n-2)
    end 
    end fib;
-function Input(): integer;
-begin
-end Input;
-function Output(k) : integer;
-begin
-end Output;
    
 begin
     n := Input();

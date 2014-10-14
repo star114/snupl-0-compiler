@@ -733,11 +733,14 @@ CAstProcedure* CParser::subroutinedecl(CAstScope* s)
         //Add symbol to global symtab.;
         if (pSymProc)
         {
-           // [check] semantic
-            s->GetSymbolTable()->AddSymbol(pSymProc);
-            //bool fSuccess = s->GetSymbolTable()->AddSymbol(pSymProc);
-            //if (false == fSuccess)
-            //   SetError(tid, "already exist subroutine name");
+            //[check] declaration repetetion check
+            //s->GetSymbolTable()->AddSymbol(pSymProc);
+            bool fSuccess = s->GetSymbolTable()->AddSymbol(pSymProc);
+            if (false == fSuccess)
+            {
+               delete pSymProc;
+               SetError(tid, "already exist subroutine name");
+            }
         }
  
         sp = new CAstProcedure(tMain, tid.GetValue(), s, pSymProc);
@@ -754,15 +757,18 @@ CAstProcedure* CParser::subroutinedecl(CAstScope* s)
             //-> in etl, snupl/0 can have only int type parameter!  
             CSymParam* pSymParam = new CSymParam(nIndex++, strName, 
                   CTypeManager::Get()->GetInt());
-            pSymtab->AddSymbol(pSymParam);
-            pSymProc->AddParam(pSymParam);
-
-            // [check] semantic
-            //bool fSuccess = pSymtab->AddSymbol(pSymParam);
-            //if (fSuccess)
-            //    pSymProc->AddParam(pSymParam);
-            //else
-            //    SetError(tvar, "already exist parameter.");
+            
+            //pSymtab->AddSymbol(pSymParam);
+            //pSymProc->AddParam(pSymParam);
+            // [check] declaration repeatetio check
+            bool fSuccess = pSymtab->AddSymbol(pSymParam);
+            if (fSuccess)
+                pSymProc->AddParam(pSymParam);
+            else
+            {
+                delete pSymParam;
+                SetError(tvar, "already exist parameter name.");
+            }
         }
         
         CAstStatement* pStat = subroutinebody(sp);
@@ -810,15 +816,15 @@ void CParser::vardeclaration(CAstScope* s)
                 {
                     CToken tvar = (*it++);
                     CSymbol* pSymbol = s->CreateVar(tvar.GetValue(), pType);
-                    pSymtab->AddSymbol(pSymbol);
-
-                    //[check] semantic
-                    //bool fSuccess = pSymtab->AddSymbol(pSymbol);
-                    //if (false == fSuccess)
-                    //{
-                    //    SetError(tvar, "Already Exist variable name");
-                    //    delete pSymbol;
-                    //}
+                    
+                    //pSymtab->AddSymbol(pSymbol);
+                    //[check] variable declaration repeatetion check
+                    bool fSuccess = pSymtab->AddSymbol(pSymbol);
+                    if (false == fSuccess)
+                    {
+                        delete pSymbol;
+                        SetError(tvar, "Already Exist variable name");
+                    }
                 }
             }
         }

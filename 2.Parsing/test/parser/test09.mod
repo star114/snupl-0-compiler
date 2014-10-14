@@ -7,10 +7,10 @@
 module m1;
     var x, y, z : integer;
         b1 : boolean;
-        x : boolean;        // ??1: x is declared again in the same scope -> int
+//        x : boolean;        // ??1: x is declared again in the same scope -> int
     function f1(x, y): integer;
         var fx1, fy1, z : integer; // OK: z is declared again, but its scope is different
-            y : boolean;           // ??2: y is one of the parameters,but declared again -> param?
+//            y : boolean;           // ??2: y is one of the parameters,but declared again -> param?
         begin
 //            w := 3;                        // ??3: w is unbound-> find symbol
             y := y + x / true; // OK: type mismatch -- NEXT PHASE
