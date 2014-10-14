@@ -569,9 +569,9 @@ CAstFunctionCall* CParser::functioncall(CToken t, CAstScope *s)
    const CSymbol* pSymbol = _findsymbol(t.GetValue(), s->GetSymbolTable());
    if (NULL == pSymbol)
         SetError(t, "cannot find function name.");
-   // [Check] to type check?? 
-   //else if (stProcedure != pSymbol->GetSymbolType())
-   //     SetError(t, "name is not subroutine symbol type");
+   // [Check]::solved to type check?? 
+   else if (stProcedure != pSymbol->GetSymbolType())
+        SetError(t, "this identifier is not subroutine name");
    else
    {
         Consume(tLBrak);
@@ -674,6 +674,10 @@ CAstDesignator* CParser::ident(CToken t, CAstScope *s)
    CSymtab *pSymTab = s->GetSymbolTable();
    const CSymbol* pSymbol = _findsymbol(t.GetValue(), pSymTab);
    if (NULL == pSymbol) SetError(t, "invalid ident.");
+   // [check]::solved
+   // procedure check!. this cannnot be procedure type!
+   else if (stProcedure == pSymbol->GetSymbolType())
+        SetError(t, "this identifier is subroutine name, not designator");
    
    return new CAstDesignator(t, pSymbol);
 }
