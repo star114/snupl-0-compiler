@@ -413,7 +413,7 @@ CAstExpression* CParser::simpleexpr(CAstScope *s)
   n = term(s);
   assert(NULL != n);
 
-  //[Check] how to handle "+"
+  //[Check]::solved how to handle "+"
   // -> opPos Unary operators add!!
   if(true == fUnary)
   {
@@ -568,7 +568,7 @@ CAstFunctionCall* CParser::functioncall(CToken t, CAstScope *s)
    
    const CSymbol* pSymbol = _findsymbol(t.GetValue(), s->GetSymbolTable());
    if (NULL == pSymbol)
-        SetError(t, "Cannot find function name.");
+        SetError(t, "cannot find function name.");
    // [Check] to type check?? 
    //else if (stProcedure != pSymbol->GetSymbolType())
    //     SetError(t, "name is not subroutine symbol type");
@@ -634,7 +634,7 @@ CAstConstant* CParser::boolean(void)
   return new CAstConstant(t, CTypeManager::Get()->GetBool(), v);
 }
 
-// [Check]
+// [Check]::solved
 // CAstType* -> cannot destroy class 
 // CAstType's Node is not consist of any other class instance.
 // -> return const CType* !
@@ -744,7 +744,7 @@ CAstProcedure* CParser::subroutinedecl(CAstScope* s)
         //Add symbol to global symtab.;
         if (pSymProc)
         {
-            //[check] declaration repetetion check
+            //[check]::solved declaration repetetion check
             //s->GetSymbolTable()->AddSymbol(pSymProc);
             bool fSuccess = s->GetSymbolTable()->AddSymbol(pSymProc);
             if (false == fSuccess)
@@ -764,14 +764,14 @@ CAstProcedure* CParser::subroutinedecl(CAstScope* s)
             CToken tvar = (*it++);
             string strName = tvar.GetValue();
 
-            // [Check] what is parameter type ?? 
+            // [Check]::solved what is parameter type ?? 
             //-> in etl, snupl/0 can have only int type parameter!  
             CSymParam* pSymParam = new CSymParam(nIndex++, strName, 
                   CTypeManager::Get()->GetInt());
             
             //pSymtab->AddSymbol(pSymParam);
             //pSymProc->AddParam(pSymParam);
-            // [check] declaration repeatetio check
+            // [check]::solved declaration repeatetio check
             bool fSuccess = pSymtab->AddSymbol(pSymParam);
             if (fSuccess)
                 pSymProc->AddParam(pSymParam);
@@ -829,12 +829,12 @@ void CParser::vardeclaration(CAstScope* s)
                     CSymbol* pSymbol = s->CreateVar(tvar.GetValue(), pType);
                     
                     //pSymtab->AddSymbol(pSymbol);
-                    //[check] variable declaration repeatetion check
+                    //[check]::solved variable declaration repeatetion check
                     bool fSuccess = pSymtab->AddSymbol(pSymbol);
                     if (false == fSuccess)
                     {
                         delete pSymbol;
-                        SetError(tvar, "Already Exist variable name");
+                        SetError(tvar, "already exist variable name");
                     }
                 }
             }
