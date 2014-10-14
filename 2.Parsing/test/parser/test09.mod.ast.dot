@@ -62,6 +62,14 @@ digraph AST {
   node63 [label="3",shape=ellipse];
   node64->node63;
   node60 -> node64 [style=dotted];
+  node66 [label="call Input",shape=box];
+  node65 [label="y",shape=ellipse];
+  node66->node65;
+  node64 -> node66 [style=dotted];
+  node69 [label="call Output",shape=box];
+  node68 [label="y",shape=ellipse];
+  node69->node68;
+  node66 -> node69 [style=dotted];
   node1 [label="p/f f1",shape=box];
   node8 [label=":=",shape=box];
   node2 [label="y",shape=ellipse];

@@ -40,9 +40,9 @@ module m1;
         y := f1(4,5,6,7); // OK: incorrect number of arguments -- NEXT PHASE
         z := f1(true, false); // OK: parameter type mismatch -- NEXT PHASE
         b1(4,5,6); // ??7: variable used like procedure -> type check?
-        p1 := 3    // ??8: procedure used like variable -> type check?
+        p1 := 3;    // ??8: procedure used like variable -> type check?
 //        p3(1,2)     // ??9: unbound procedure name
-//        Input(y);    // ??10: Input is not in symbol table (but presents in fibonacci module)
-//        Output(y)    // ??11: Output is not in symbol table (but presents in fiboancci module)
+        Input(y);    // ??10: Input is not in symbol table (but presents in fibonacci module)
+        Output(y)    // ??11: Output is not in symbol table (but presents in fiboancci module)
     end m1.
 //////

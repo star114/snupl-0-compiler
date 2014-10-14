@@ -133,6 +133,7 @@ CAstModule* CParser::module(void)
   Consume(tSemicolon);
 
   CAstModule *m = new CAstModule(tModuleName, tModuleName.GetValue());
+  InitSymbolTable(m->GetSymbolTable());
   vardeclaration(m);
 
   while(_scanner->Peek().GetType() == tProcedure || _scanner->Peek().GetType() == tFunction) {
