@@ -402,11 +402,11 @@ bool CAstStatAssign::TypeCheck(CToken *t, string *msg) const
 
     if (!lhs->TypeCheck(t,msg)) return false;
     if (!rhs->TypeCheck(t,msg)) return false;
-    
+   
     if (!lhs->GetType()->Match(rhs->GetType()))
     {
         if (t != NULL) *t = rhs->GetToken();
-        if (msg != NULL) *msg = "assgin : lhs&rhs types are not matched.";
+        if (msg != NULL) *msg = "assign : lhs&rhs types are not matched.";
         return false;
     }
     
@@ -752,7 +752,7 @@ bool CAstStatWhile::TypeCheck(CToken *t, string *msg) const
     if(!cond->GetType()->Match(CTypeManager::Get()->GetBool()))
     {
         if (t != NULL) *t = cond->GetToken();
-        if (msg != NULL) *msg = "if condition is not boolean type.";
+        if (msg != NULL) *msg = "while condition is not boolean type.";
         return false;
     }
 

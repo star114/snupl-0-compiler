@@ -421,7 +421,7 @@ CAstExpression* CParser::simpleexpr(CAstScope *s)
 
      //[Check] semantic : UnaryOp -> neg/pos substitution
      CAstConstant* cons = dynamic_cast<CAstConstant*>(u);
-     if ( cons != NULL )
+     if ( (cons != NULL) && cons->GetType()->Match(CTypeManager::Get()->GetInt()) )
      {
         if (opUnary == opNeg)
             cons->SetValue((long long) (0 - cons->GetValue()));
