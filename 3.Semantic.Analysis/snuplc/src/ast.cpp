@@ -992,6 +992,7 @@ bool CAstUnaryOp::TypeCheck(CToken *t, string *msg) const
 {
     EOperation oper = GetOperation();
     CAstExpression* operand = GetOperand();
+    
     if (!operand->TypeCheck(t, msg)) return false;
     if (oper == opNot)
     {
@@ -1304,7 +1305,7 @@ bool CAstConstant::TypeCheck(CToken *t, string *msg) const
     }
     else if (type->Match(CTypeManager::Get()->GetInt()))
     {
-        //[fix-me]Range check
+        //[Check] Range check
         long long value = GetValue();
         if ((value > 2147483647) || (value < -2147483648))
         {

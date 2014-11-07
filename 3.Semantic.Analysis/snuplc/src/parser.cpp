@@ -418,7 +418,17 @@ CAstExpression* CParser::simpleexpr(CAstScope *s)
   if(true == fUnary)
   {
      CAstExpression *u = n;
-     n = new CAstUnaryOp(tpm, opUnary, u);
+
+     //[Check] semantic : UnaryOp -> neg/pos substitution
+     CAstConstant* cons = dynamic_cast<CAstConstant*>(u);
+     if ( cons != NULL )
+     {
+        if (opUnary == opNeg)
+            cons->SetValue((long long) (0 - cons->GetValue()));
+        n = cons;
+     }
+     else
+        n = new CAstUnaryOp(tpm, opUnary, u);
   }
 
   EToken et = _scanner->Peek().GetType();
