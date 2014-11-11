@@ -397,11 +397,11 @@ CAstExpression* CAstStatAssign::GetRHS(void) const
 
 bool CAstStatAssign::TypeCheck(CToken *t, string *msg) const
 {
-    CAstDesignator* lhs = GetLHS();
     CAstExpression* rhs = GetRHS();
-
-    if (!lhs->TypeCheck(t,msg)) return false;
     if (!rhs->TypeCheck(t,msg)) return false;
+    
+    CAstDesignator* lhs = GetLHS();
+    if (!lhs->TypeCheck(t,msg)) return false;
    
     if (!lhs->GetType()->Match(rhs->GetType()))
     {
