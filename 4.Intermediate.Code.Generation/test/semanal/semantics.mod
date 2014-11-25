@@ -42,8 +42,8 @@ begin
   a := !true;               // pass
   a := !!!true;             // pass
   a := !false;              // pass
-//  a := -true;               // fail (semantic assign typecheck)
-//  a := +false;              // fail (semantic assign typecheck)
+  //a := -true;               // fail (semantic assign typecheck)
+  //a := +false;              // fail (semantic assign typecheck)
 
   i := -0;                  // pass
   i := +0;                  // pass
@@ -51,8 +51,8 @@ begin
 //  i := +-0;                 // fail (parser)
   i := -2147483648;         // pass (min int)
   j :=  2147483647//;         // pass (max int)
-//  i := -2147483649;         // fail (<min int)
-//  j :=  2147483648;         // fail (>max int)
+//  i := -2147483649//;         // fail (<min int)
+//  j :=  2147483648//;         // fail (>max int)
 
 //  a := 0                    // fail (semantic assign typecheck)
 end Constants;
@@ -91,7 +91,7 @@ begin
 //  Parameters(1);            // fail (semantic - parameter counts mismatching)
 //  Parameters(true, false);  // fail (semantic - parameter type error)
 //  Parameters(1,2,3);        // fail (semantic - parameter counts mismatching)
-  //Parameters(1,2,3,4)       // fail (parser - semicolon error)
+//  Parameters(1,2,3,4)       // fail (parser - semicolon error)
 //  Parameters(1,2,3,4);      // fail (semantic - parameter counts mismatching)
 
   Parameters(p2,p1);        // pass
@@ -114,7 +114,7 @@ begin
 //  i := j + b;               // fail
 //  i := j && k || p1;        // fail
 //  i := !j;                  // fail
-  //i := j + -k;              // fail (parser - need factor not simpleexpr)
+//  i := j + -k;              // fail (parser - need factor not simpleexpr)
   i := j + (-k);            // pass
 
   a := a && !b && (i < j)   // pass
@@ -137,8 +137,7 @@ end Assignments;
 // return statements type checks
 procedure ProcReturn();
 begin
-    return
-//  return 5                  // fail (semantic)
+  return //5                  // fail (semantic)
 end ProcReturn;
 
 function NoReturn(): integer;
