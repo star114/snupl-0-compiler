@@ -784,29 +784,23 @@ CTacAddr* CAstStatIf::ToTac(CCodeBlock *cb, CTacLabel *next)
     _cond->ToTac(cb, iftrue, iffalse);
 
     cb->AddInstr(iftrue);
-    if (NULL != _ifBody)
+    CAstStatement *ifstats = _ifBody;
+    while (ifstats != NULL)
     {
-        CAstStatement *s = _ifBody;
-        while (s != NULL)
-        {
-            CTacLabel *next = cb->CreateLabel();
-            s->ToTac(cb, next);
-            cb->AddInstr(next);
-            s = s->GetNext();
-        }
-        cb->AddInstr(new CTacInstr(opGoto, next));
+        CTacLabel *ifnext = cb->CreateLabel();
+        ifstats->ToTac(cb, ifnext);
+        cb->AddInstr(ifnext);
+        ifstats = ifstats->GetNext();
     }
+    cb->AddInstr(new CTacInstr(opGoto, next));
     cb->AddInstr(iffalse);
-    if (NULL != _elseBody)
+    CAstStatement *elsestats = _elseBody;
+    while (elsestats != NULL)
     {
-        CAstStatement *s = _elseBody;
-        while (s != NULL)
-        {
-            CTacLabel *next = cb->CreateLabel();
-            s->ToTac(cb, next);
-            cb->AddInstr(next);
-            s = s->GetNext();
-        }
+        CTacLabel *elsenext = cb->CreateLabel();
+        elsestats->ToTac(cb, elsenext);
+        cb->AddInstr(elsenext);
+        elsestats = elsestats->GetNext();
     }
     cb->AddInstr(new CTacInstr(opGoto, next));
     return NULL;
@@ -915,18 +909,16 @@ CTacAddr* CAstStatWhile::ToTac(CCodeBlock *cb, CTacLabel *next)
     _cond->ToTac(cb, whilebody, next);
 
     cb->AddInstr(whilebody);
-    if (NULL != _body)
+    CAstStatement *s = _body;
+    while (s != NULL)
     {
-        CAstStatement *s = _body;
-        while (s != NULL)
-        {
-            CTacLabel *next = cb->CreateLabel();
-            s->ToTac(cb, next);
-            cb->AddInstr(next);
-            s = s->GetNext();
-        }
-        cb->AddInstr(new CTacInstr(opGoto, whilecond));
+        CTacLabel *bodynext = cb->CreateLabel();
+        s->ToTac(cb, bodynext);
+        cb->AddInstr(bodynext);
+        s = s->GetNext();
     }
+    cb->AddInstr(new CTacInstr(opGoto, whilecond));
+    
     cb->AddInstr(new CTacInstr(opGoto, next));
     return NULL;
 }
