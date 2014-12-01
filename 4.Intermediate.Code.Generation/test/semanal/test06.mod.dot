@@ -1,0 +1,18 @@
+digraph IR {
+  graph [fontname="Times New Roman",fontsize=10];
+  node  [fontname="Courier New",fontsize=10];
+  edge  [fontname="Times New Roman",fontsize=10];
+
+  // scope 'test06'
+  test06_cb [label="test06\r",shape=box]
+  // scope 'foo'
+  foo_cb [label="foo\r  0:     assign b <- c\l  1:     add    t0 <- a, b\l  2:     assign c <- t0\l",shape=box]
+  // scope 'unary'
+  unary_cb [label="unary\r  0:     assign t0 <- 1\l  1:     goto   3\l  2:     assign t0 <- 0\l  3: 3:\l  4:     assign b0 <- t0\l",shape=box]
+  // scope 'binop'
+  binop_cb [label="binop\r  0:     neg    t0 <- p0\l  1:     add    t1 <- t0, p1\l  2:     if     t1 > 0 goto 2\l  3:     if     p0 > 0 goto 5\l  4:     goto   1\l  5: 5:\l  6:     if     p1 < 0 goto 2\l  7: 1:\l  8:     assign t2 <- 1\l  9:     goto   3\l 10: 2:\l 11:     assign t2 <- 0\l 12: 3:\l 13:     return t2\l",shape=box]
+  // scope 'intop'
+  intop_cb [label="intop\r  0:     neg    t0 <- p0\l  1:     pos    t1 <- p1\l  2:     add    t2 <- t0, t1\l  3:     return t2\l",shape=box]
+  // scope 'compare'
+  compare_cb [label="compare\r  0:     param  1 <- b\l  1:     param  0 <- a\l  2:     call   t0 <- binop\l  3:     if     t0 = 1 goto 4\l  4:     goto   2_if_false\l  5: 4:\l  6:     param  1 <- a\l  7:     param  0 <- b\l  8:     call   t1 <- intop\l  9:     if     t1 < a goto 3\l 10:     goto   2_if_false\l 11: 3:\l 12:     if     a # b goto 1_if_true\l 13:     goto   2_if_false\l 14: 1_if_true:\l 15:     return 1\l 16:     goto   0\l 17: 2_if_false:\l 18:     return 0\l 19: 0:\l",shape=box]
+};
