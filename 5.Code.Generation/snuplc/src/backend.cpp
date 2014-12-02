@@ -331,8 +331,10 @@ size_t CBackendx86::ComputeStackOffsets(CSymtab *symtab,
 {
   assert(symtab != NULL);
   vector<CSymbol*> slist = symtab->GetSymbols();
-
+  
+  
   // TODO
+  size_t size = 0;
   // foreach local symbol l in slist do
   //   compute aligned offset on stack and store in symbol l
   //   set base register to %ebp

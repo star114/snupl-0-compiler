@@ -48,9 +48,10 @@ void test_input(char *name, int (*f)(void))
 }
 
 
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
   test_output("Output", "    %12d : ", &Output);
   //test_output("OutputHex", "    %8x : ", &OutputHex);
   test_input("Input", &Input);
+  return 0;
 }
