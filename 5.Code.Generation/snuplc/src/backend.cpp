@@ -517,7 +517,6 @@ string CBackendx86::Label(CTacLabel* label) const
   ostringstream o;
   o << "l_" << cs->GetName() << "_" << label->GetLabel();
   return o.str();
-  return "l_" + cs->GetName() + "_" + label->GetLabel();
 }
 
 string CBackendx86::Label(string label) const
