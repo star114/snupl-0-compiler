@@ -595,5 +595,5 @@ size_t CBackendx86::ComputeStackOffsets(CSymtab *symtab,
 void CBackendx86::AlignSize(size_t& size, const size_t& align)
 {
     if ((size % align) != 0)
-        size += (align - (size % align));
+        size += (align - (size % align)); // size = (size / align) + 1 
 }
