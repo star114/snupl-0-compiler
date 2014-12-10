@@ -1,0 +1,10 @@
+digraph IR {
+  graph [fontname="Times New Roman",fontsize=10];
+  node  [fontname="Courier New",fontsize=10];
+  edge  [fontname="Times New Roman",fontsize=10];
+
+  // scope 'il_test_shortcircuit_return'
+  il_test_shortcircuit_return_cb [label="il_test_shortcircuit_return\r  0:     param  1 <- 1\l  1:     param  0 <- 1\l  2:     call   t0 <- func\l  3:     param  1 <- 0\l  4:     param  0 <- 0\l  5:     call   t1 <- func\l  6:     call   t2 <- Input\l  7:     param  1 <- t2\l  8:     call   t3 <- Input\l  9:     param  0 <- t3\l 10:     call   t4 <- func\l",shape=box]
+  // scope 'func'
+  func_cb [label="func\r  0:     if     p > 0 goto 7\l  1:     goto   2\l  2: 7:\l  3:     call   t0 <- Input\l  4:     if     t0 = 0 goto 6\l  5:     goto   2\l  6: 6:\l  7:     if     q > 0 goto 5\l  8:     goto   2\l  9: 5:\l 10:     param  1 <- q\l 11:     param  0 <- 1\l 12:     call   t1 <- func\l 13:     if     t1 = 1 goto 4\l 14:     goto   2\l 15: 4:\l 16:     param  1 <- 1\l 17:     param  0 <- p\l 18:     call   t2 <- func\l 19:     if     t2 = 1 goto 1\l 20:     goto   2\l 21: 1:\l 22:     assign t3 <- 1\l 23:     goto   3\l 24: 2:\l 25:     assign t3 <- 0\l 26: 3:\l 27:     return t3\l",shape=box]
+};

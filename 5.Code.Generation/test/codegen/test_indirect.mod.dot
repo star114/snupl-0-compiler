@@ -1,0 +1,10 @@
+digraph IR {
+  graph [fontname="Times New Roman",fontsize=10];
+  node  [fontname="Courier New",fontsize=10];
+  edge  [fontname="Times New Roman",fontsize=10];
+
+  // scope 'il_test_shortcircuit_indirect'
+  il_test_shortcircuit_indirect_cb [label="il_test_shortcircuit_indirect\r  0:     call   t0 <- Input\l  1:     assign p <- t0\l  2:     call   t1 <- Input\l  3:     assign q <- t1\l  4:     param  0 <- p\l  5:     call   t2 <- is_zero\l  6:     if     t2 = 1 goto 5\l  7:     goto   4_if_false\l  8: 5:\l  9:     param  0 <- q\l 10:     call   t3 <- is_zero\l 11:     if     t3 = 1 goto 3_if_true\l 12:     goto   4_if_false\l 13: 3_if_true:\l 14:     param  0 <- 0\l 15:     call   Output\l 16:     goto   2\l 17: 4_if_false:\l 18:     param  0 <- p\l 19:     call   t4 <- is_zero\l 20:     if     t4 = 1 goto 8_if_true\l 21:     param  0 <- q\l 22:     call   t5 <- is_zero\l 23:     if     t5 = 1 goto 8_if_true\l 24:     goto   9_if_false\l 25: 8_if_true:\l 26:     param  0 <- 1\l 27:     call   Output\l 28:     goto   7\l 29: 9_if_false:\l 30:     param  0 <- 2\l 31:     call   Output\l 32: 7:\l 33: 2:\l",shape=box]
+  // scope 'is_zero'
+  is_zero_cb [label="is_zero\r  0:     if     n = 0 goto 1\l  1:     goto   2\l  2: 1:\l  3:     assign t0 <- 1\l  4:     goto   3\l  5: 2:\l  6:     assign t0 <- 0\l  7: 3:\l  8:     return t0\l",shape=box]
+};

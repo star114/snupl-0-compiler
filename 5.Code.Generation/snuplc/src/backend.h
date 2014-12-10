@@ -160,6 +160,10 @@ class CBackendx86 : public CBackend {
     /// @param local_ofs offset to local vars from base pointer after epilogue
     size_t ComputeStackOffsets(CSymtab *symtab, int param_ofs, int local_ofs);
 
+    /// @brief align size calculation
+    /// @param size in_out target size
+    /// @param align const align value
+    void AlignSize(size_t& size, const size_t& align);
     /// @}
 
     string _ind;                    ///< indentation

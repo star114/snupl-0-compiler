@@ -1,0 +1,8 @@
+digraph IR {
+  graph [fontname="Times New Roman",fontsize=10];
+  node  [fontname="Courier New",fontsize=10];
+  edge  [fontname="Times New Roman",fontsize=10];
+
+  // scope 'mine'
+  mine_cb [label="mine\r  0:     assign p <- 1\l  1:     assign q <- 2\l  2:     assign r <- 3\l  3:     assign s <- p\l  4:     param  0 <- p\l  5:     call   Output\l  6:     param  0 <- q\l  7:     call   Output\l  8:     param  0 <- r\l  9:     call   Output\l 10:     param  0 <- s\l 11:     call   Output\l",shape=box]
+};
