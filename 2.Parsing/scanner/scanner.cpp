@@ -4,7 +4,7 @@
 /// @section changelog Change Log
 /// 2012/09/14 Bernhard Egger created
 /// 2013/03/07 Bernhard Egger adapted to SnuPL/0
-/// 2014/09/18 Bernhard Egger bugfix (*/ accepted as //)
+/// 2014/09/10 Bernhard Egger assignment 1: scans SnuPL/-1
 ///
 /// @section license_section License
 /// Copyright (c) 2012-2014, Bernhard Egger
@@ -49,39 +49,38 @@ using namespace std;
 #define TOKEN_STRLEN 16
 
 char ETokenName[][TOKEN_STRLEN] = {
-  "tIdent",                         ///< ident
   "tNumber",                        ///< number
-  "tBoolConst",                     ///< boolean constant
   "tPlusMinus",                     ///< '+' or '-'
-  "tMulDiv",                        ///< '*' or '/'
-  "tOr",                            ///< '||'
-  "tAnd",                           ///< '&&'
-  "tNot",                           ///< '!'
+  "tMulDiv",                        ///< '*' or '/' or "&&"
   "tRelOp",                         ///< relational operator
   "tAssign",                        ///< assignment operator
-  "tComma",                         ///< a comma
   "tSemicolon",                     ///< a semicolon
-  "tColon",                         ///< a colon
   "tDot",                           ///< a dot
   "tLBrak",                         ///< a left bracket
   "tRBrak",                         ///< a right bracket
+// Additional Tokens.
+  "tIdent",                         ///< identifier
+  "tBoolConst",                     ///< boolean ("true" or "false")
+  "tType",                          ///< type ("integer" or "boolean")
+  "tOr",                            ///< or operator ("||")
+  "tAnd",                           ///< and operator ("&&")
+  "tNot",                           ///< not operator ('!')
+  "tBegin",                         ///< keyword "begin"
+  "tEnd",                           ///< keyword "end"
+  "tModule",                        ///< keyword "module"
+  "tIf",                            ///< keyword "if"
+  "tThen",                          ///< keyword "then"
+  "tElse",                          ///< keyword "else"
+  "tWhile",                         ///< keyword "while"
+  "tDo",                            ///< keyword "do"
+  "tReturn",                        ///< keyword "return"
+  "tVar",                           ///< keyword "var"
+  "tProcedure",                     ///< keyword "procedure"
+  "tFunction",                      ///< keyword "function"
+  "tComma",                         ///< a comma
+  "tColon",                         ///< a colon
 
-  "tModule",                        ///< 'module'
-  "tProcedure",                     ///< 'procedure'
-  "tFunction",                      ///< 'function'
-  "tVarDecl",                       ///< 'var'
-  "tInteger",                       ///< 'integer'
-  "tBoolean",                       ///< 'boolean'
-  "tBegin",                         ///< 'begin'
-  "tEnd",                           ///< 'end'
-  "tIf",                            ///< 'if'
-  "tThen",                          ///< 'then'
-  "tElse",                          ///< 'else'
-  "tWhile",                         ///< 'while'
-  "tDo",                            ///< 'do'
-  "tReturn",                        ///< 'return'
-
-  "tComment",                       ///< comment ('// .... \n')
+  "tComment",                       ///< comment line
   "tEOF",                           ///< end of file
   "tIOError",                       ///< I/O error
   "tUndefined",                     ///< undefined
@@ -93,39 +92,38 @@ char ETokenName[][TOKEN_STRLEN] = {
 //
 
 char ETokenStr[][TOKEN_STRLEN] = {
-  "tIdent (%s)",                    ///< ident
   "tNumber (%s)",                   ///< number
-  "tBoolConst (%s)",                ///< boolean constant
-  "tPlusMinus (%s)",                ///< '+' or '-'
-  "tMulDiv (%s)",                   ///< '*' or '/'
-  "tOr",                            ///< '||'
-  "tAnd",                           ///< '&&'
-  "tNot",                           ///< '!'
+  "tPlusMinus (%s)",                ///< '+' or '-' or "||"
+  "tMulDiv (%s)",                   ///< '*' or '/' or "&&"
   "tRelOp (%s)",                    ///< relational operator
   "tAssign",                        ///< assignment operator
-  "tComma",                         ///< a comma
   "tSemicolon",                     ///< a semicolon
-  "tColon",                         ///< a colon
   "tDot",                           ///< a dot
   "tLBrak",                         ///< a left bracket
   "tRBrak",                         ///< a right bracket
+// Additional Tokens.
+  "tIdent (%s)",                    ///< identifier
+  "tBoolConst (%s)",                ///< boolean ("true" or "false")
+  "tType (%s)",                     ///< type ("integer" or "boolean")
+  "tOr",                            ///< or operator ("||")
+  "tAnd",                           ///< and operator ("&&")
+  "tNot",                           ///< not operator ('!')
+  "tBegin",                         ///< keyword "begin"
+  "tEnd",                           ///< keyword "end"
+  "tModule",                        ///< keyword "module"
+  "tIf",                            ///< keyword "if"
+  "tThen",                          ///< keyword "then"
+  "tElse",                          ///< keyword "else"
+  "tWhile",                         ///< keyword "while"
+  "tDo",                            ///< keyword "do"
+  "tReturn",                        ///< keyword "return"
+  "tVar",                           ///< keyword "var"
+  "tProcedure",                     ///< keyword "procedure"
+  "tFunction",                      ///< keyword "function"
+  "tComma",                         ///< a comma
+  "tColon",                         ///< a colon
 
-  "tModule",                        ///< 'module'
-  "tProcedure",                     ///< 'procedure'
-  "tFunction",                      ///< 'function'
-  "tVarDecl",                       ///< 'var'
-  "tInteger",                       ///< 'integer'
-  "tBoolean",                       ///< 'boolean'
-  "tBegin",                         ///< 'begin'
-  "tEnd",                           ///< 'end'
-  "tIf",                            ///< 'if'
-  "tThen",                          ///< 'then'
-  "tElse",                          ///< 'else'
-  "tWhile",                         ///< 'while'
-  "tDo",                            ///< 'do'
-  "tReturn",                        ///< 'return'
-
-  "tComment (%s)",                  ///< comment ('// .... \n')
+  "tComment (%s)",                       ///< comment line
   "tEOF",                           ///< end of file
   "tIOError",                       ///< I/O error
   "tUndefined (%s)",                ///< undefined
@@ -137,22 +135,22 @@ char ETokenStr[][TOKEN_STRLEN] = {
 //
 pair<const char*, EToken> Keywords[] =
 {
-  { "module",    tModule    },
-  { "procedure", tProcedure },
-  { "function",  tFunction  },
-  { "var",       tVarDecl   },
-  { "integer",   tInteger   },
-  { "boolean",   tBoolean   },
-  { "begin",     tBegin     },
-  { "end",       tEnd       },
-  { "if",        tIf        },
-  { "then",      tThen      },
-  { "else",      tElse      },
-  { "while",     tWhile     },
-  { "do",        tDo        },
-  { "return",    tReturn    },
-  { "true",      tBoolConst },
-  { "false",     tBoolConst },
+   {"begin", tBegin},
+   {"end", tEnd},
+   {"module", tModule},
+   {"if", tIf},
+   {"then", tThen},
+   {"else", tElse},
+   {"while", tWhile},
+   {"do", tDo},
+   {"return", tReturn},
+   {"var", tVar},
+   {"procedure", tProcedure},
+   {"function", tFunction},
+   {"true", tBoolConst},
+   {"false", tBoolConst},
+   {"integer", tType},
+   {"boolean", tType}
 };
 
 
@@ -312,119 +310,124 @@ CToken* CScanner::Scan()
   string tokval;
   char c;
 
-  do {
-    while (_in->good() && IsWhite(_in->peek())) GetChar();
+  while (_in->good() && IsWhite(_in->peek())) GetChar();
 
-    RecordStreamPosition();
+  RecordStreamPosition();
 
-    if (_in->eof()) return NewToken(tEOF);
-    if (!_in->good()) return NewToken(tIOError);
+  if (_in->eof()) return NewToken(tEOF);
+  if (!_in->good()) return NewToken(tIOError);
 
-    c = GetChar();
-    tokval = c;
-    token = tUndefined;
+  c = GetChar();
+  tokval = c;
+  token = tUndefined;
 
-    switch (c) {
-      case ':':
-        if (_in->peek() == '=') {
-          tokval += GetChar();
-          token = tAssign;
-        } else {
-          token = tColon;
-        }
-        break;
+  switch (c) {
+    case ':':
+      if (_in->peek() == '=') {
+        tokval += GetChar();
+        token = tAssign;
+      }
+      else
+        token = tColon;
+      break;
 
-      case '+':
-      case '-':
-        token = tPlusMinus;
-        break;
+    case '+':
+    case '-':
+      token = tPlusMinus;
+      break;
+    case '|':
+      if (_in->peek() == '|')
+      {
+        tokval += GetChar();
+        token = tOr;
+      }
+      break;
 
-      case '*':
-        token = tMulDiv;
-        break;
-
-      case '/':
-        if (_in->peek() == '/') {
-          do {
+    case '*':
+      token = tMulDiv;
+      break;
+    case '/':
+      if(_in->peek() == '/')
+      {
+        do {
             tokval += GetChar();
-          } while (_in->good() && (_in->peek() != '\n'));
-          token = tComment;
-        } else {
-          token = tMulDiv;
-        }
-        break;
+        } while( _in->good() && (_in->peek() != '\n'));
+        token = tComment;
+      }
+      else
+        token = tMulDiv;
+      break;
+    case '&':
+      if (_in->peek() == '&')
+      {
+        tokval += GetChar();
+        token = tAnd;
+      }
+      break;
 
-      case '|':
-        if (_in->peek() == '|') {
-          tokval += GetChar();
-          token = tOr;
-        }
-        break;
+    case '=':
+    case '#':
+      token = tRelOp;
+      break;
+    case '<':
+    case '>':
+      if (_in->peek() == '=')
+      {
+        tokval += GetChar();
+      }
+      token = tRelOp;
+      break;
 
-      case '&':
-        if (_in->peek() == '&') {
-          tokval += GetChar();
-          token = tAnd;
-        }
-        break;
+    case ';':
+      token = tSemicolon;
+      break;
 
-      case '!':
-        token = tNot;
-        break;
+    case '.':
+      token = tDot;
+      break;
 
-      case '<':
-      case '>':
-        if (_in->peek() == '=') tokval += GetChar();
-        token = tRelOp;
-        break;
+    case '(':
+      token = tLBrak;
+      break;
 
-      case '=':
-      case '#':
-        token = tRelOp;
-        break;
+    case ')':
+      token = tRBrak;
+      break;
 
-      case ',':
-        token = tComma;
-        break;
+    case '!':
+      token = tNot;
+      break;
 
-      case ';':
-        token = tSemicolon;
-        break;
+    case ',':
+      token = tComma;
+      break;
 
-      case '.':
-        token = tDot;
-        break;
+    default:
+      if (IsNum(c)) {
+        while (IsNum(_in->peek())) tokval += GetChar();
+        token = tNumber;
+      } 
+      else if(IsLetter_(c)) {
+        while (IsLetter_(_in->peek()) || IsNum(_in->peek())) tokval += GetChar();
+       
+        // if tokval is a member of keywords, then return Keywords' EToken value;
+        map<string, EToken>::iterator it = keywords.find(tokval);
+        if (it != keywords.end()) token = (*it).second;
+        else token = tIdent;
+      }
+      else {
+        tokval = "invalid character '";
+        tokval += c;
+        tokval += "'";
+      }
+      break;
+  }
 
-      case '(':
-        token = tLBrak;
-        break;
-
-      case ')':
-        token = tRBrak;
-        break;
-
-      default:
-        if (IsAlpha(c)) {
-          while (IsIDChar(_in->peek())) tokval += GetChar();
-
-          map<string, EToken>::const_iterator it = keywords.find(tokval);
-          if (it != keywords.end()) token = (*it).second;
-          else token = tIdent;
-        } else
-          if (IsNum(c)) {
-            while (IsNum(_in->peek())) tokval += GetChar();
-            token = tNumber;
-          } else {
-            tokval = "invalid character '";
-            tokval += c;
-            tokval += "'";
-          }
-        break;
-
-    }
-  } while (token == tComment);
-
-  return NewToken(token, tokval);
+  //consume the tComments
+  if (tComment == token)
+    return Scan();
+  else
+    return NewToken(token, tokval);
 }
 
 char CScanner::GetChar()
@@ -443,12 +446,7 @@ string CScanner::GetChar(int n)
 
 bool CScanner::IsWhite(char c) const
 {
-  return ((c == ' ') || (c == '\t') || (c == '\n'));
-}
-
-bool CScanner::IsAlpha(char c) const
-{
-  return ((('a' <= c) && (c <= 'z')) || (('A' <= c) && (c <= 'Z')) || (c == '_'));
+  return ((c == ' ') || (c == '\n') || (c == '\t'));
 }
 
 bool CScanner::IsNum(char c) const
@@ -456,7 +454,7 @@ bool CScanner::IsNum(char c) const
   return (('0' <= c) && (c <= '9'));
 }
 
-bool CScanner::IsIDChar(char c) const
+bool CScanner::IsLetter_(char c) const
 {
-  return (IsAlpha(c) || IsNum(c));
+  return ((('A' <= c) && (c <= 'Z')) || (('a' <= c) && (c <= 'z')) || (c == '_'));
 }

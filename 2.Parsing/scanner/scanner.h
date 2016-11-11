@@ -4,9 +4,10 @@
 /// @section changelog Change Log
 /// 2012/09/14 Bernhard Egger created
 /// 2013/03/07 Bernhard Egger adapted to SnuPL/0
+/// 2014/09/10 Bernhard Egger assignment 1: scans SnuPL/-1
 ///
 /// @section license_section License
-/// Copyright (c) 2012,2013, Bernhard Egger
+/// Copyright (c) 2012-2014, Bernhard Egger
 /// All rights reserved.
 ///
 /// Redistribution and use in source and binary forms,  with or without modifi-
@@ -47,39 +48,38 @@ using namespace std;
 /// each member of this enumeration represents a token in SnuPL/0
 ///
 enum EToken {
-  tIdent=0,                         ///< ident
-  tNumber,                          ///< number
-  tBoolConst,                       ///< boolean constant
+  tNumber=0,                        ///< number
   tPlusMinus,                       ///< '+' or '-'
   tMulDiv,                          ///< '*' or '/'
-  tOr,                              ///< '||'
-  tAnd,                             ///< '&&'
-  tNot,                             ///< '!'
   tRelOp,                           ///< relational operator
   tAssign,                          ///< assignment operator
-  tComma,                           ///< a comma
   tSemicolon,                       ///< a semicolon
-  tColon,                           ///< a colon
   tDot,                             ///< a dot
   tLBrak,                           ///< a left bracket
   tRBrak,                           ///< a right bracket
+// Additional Tokens.
+  tIdent,                           ///< identifier
+  tBoolConst,                       ///< boolean ("true" or "false")
+  tType,                            ///< type ("integer" or "boolean")
+  tOr,                              ///< or operator ("||")
+  tAnd,                             ///< and operator ("&&")
+  tNot,                             ///< not operator ('!')
+  tBegin,                           ///< keyword "begin"
+  tEnd,                             ///< keyword "end"
+  tModule,                          ///< keyword "module"
+  tIf,                              ///< keyword "if"
+  tThen,                            ///< keyword "then"
+  tElse,                            ///< keyword "else"
+  tWhile,                           ///< keyword "while"
+  tDo,                              ///< keyword "do"
+  tReturn,                          ///< keyword "return"
+  tVar,                             ///< keyword "var"
+  tProcedure,                       ///< keyword "procedure"
+  tFunction,                        ///< keyword "function"
+  tComma,                           ///< a comma
+  tColon,                           ///< a colon
 
-  tModule,                          ///< 'module'
-  tProcedure,                       ///< 'procedure'
-  tFunction,                        ///< 'function'
-  tVarDecl,                         ///< 'var'
-  tInteger,                         ///< 'integer'
-  tBoolean,                         ///< 'boolean'
-  tBegin,                           ///< 'begin'
-  tEnd,                             ///< 'end'
-  tIf,                              ///< 'if'
-  tThen,                            ///< 'then'
-  tElse,                            ///< 'else'
-  tWhile,                           ///< 'while'
-  tDo,                              ///< 'do'
-  tReturn,                          ///< 'return'
-
-  tComment,                         ///< comment ('// .... \n')
+  tComment,                         ///< comment line
   tEOF,                             ///< end of file
   tIOError,                         ///< I/O error
   tUndefined,                       ///< undefined
@@ -294,26 +294,19 @@ class CScanner {
     /// @retval false character is not white space
     bool IsWhite(char c) const;
 
-    /// @brief check if a character is an alphabetic character (a-z, A-Z)
-    ///
-    /// @param c character
-    /// @retval true character is alphabetic
-    /// @retval false character is not alphabetic
-    bool IsAlpha(char c) const;
-
     /// @brief check if a character is an numeric character (0-9)
     ///
     /// @param c character
     /// @retval true character is numeric
     /// @retval false character is not numeric
     bool IsNum(char c) const;
-
-    /// @brief check if a character is a valid ID character
+    
+    /// @brief check if a character is a letters and underscore(A..Z,a..z,_)
     ///
     /// @param c character
-    /// @retval true character is valid as an ID character
-    /// @retval false character is not valid in an ID
-    bool IsIDChar(char c) const;
+    /// @retval true character is letter_
+    /// @retval false character is not letter_
+    bool IsLetter_(char c) const;
 
     /// @}
 
